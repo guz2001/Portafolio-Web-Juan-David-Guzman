@@ -99,13 +99,87 @@ npm run og
 
 El diseño vive en `scripts/generar-og-image.mjs`.
 
-### Poner tu foto
+### Poner tu foto de perfil
 
-1. Copia la foto a `public/images/perfil.jpg` (cuadrada, mínimo 420×420 px).
-2. En `src/data/profile.js`: `photo: '/images/perfil.jpg'`.
+**Dos pasos:**
 
-Mientras `photo` esté vacío se dibuja un monograma **JG** con anillos orbitales.
-Es deliberado: antes eso que la foto de archivo de una persona que no eres.
+```bash
+# 1. Copia tu foto aquí (la carpeta ya existe)
+cp ~/ruta/a/tu-foto.jpg public/images/perfil.jpg
+```
+
+```js
+// 2. src/data/profile.js — línea 66
+photo: '/images/perfil.jpg',
+```
+
+Guarda y listo. Con `npm run dev` se ve al instante.
+
+> **La ruta se escribe sin `public`.** Todo lo que hay en `public/` se sirve
+> desde la raíz del sitio: `public/images/perfil.jpg` se pide como
+> `/images/perfil.jpg`. Es el error más común.
+
+**Requisitos de la imagen**
+
+| | |
+|---|---|
+| Forma | Cuadrada — se recorta en círculo con `object-fit: cover` |
+| Tamaño mínimo | 420×420 px (se muestra a 234 px, el doble para pantallas Retina) |
+| Formato | `.jpg` o `.webp` |
+| Peso | Menos de 150 KB |
+| Encuadre | Cara centrada: el recorte circular come las esquinas |
+
+#### Dónde se usa la foto, archivo por archivo
+
+La foto viaja por **cuatro archivos**, y solo uno la dibuja:
+
+| # | Archivo | Línea | Papel |
+|---|---|---|---|
+| 1 | `public/images/perfil.jpg` | — | **El archivo.** Lo pones tú |
+| 2 | [`src/data/profile.js`](src/data/profile.js) | **66** | **La ruta.** Campo `photo`. Lo editas tú |
+| 3 | [`src/types/portfolio.js`](src/types/portfolio.js) | 36 | El contrato JSDoc. No se toca |
+| 4 | [`src/components/sections/About.astro`](src/components/sections/About.astro) | **45-56** | **El único componente que la pinta** |
+
+El componente decide entre foto y monograma:
+
+```astro
+<!-- src/components/sections/About.astro, líneas 45-56 -->
+{profile.photo ? (
+  <img
+    class="portrait__img"
+    src={profile.photo}
+    alt={`Retrato de ${profile.name}`}
+    width="420" height="420"
+    loading="lazy" decoding="async"
+  />
+) : (
+  <span class="portrait__monogram" aria-hidden="true">{profile.initials}</span>
+)}
+```
+
+Los anillos orbitales se dibujan igual en ambos casos, así que la foto queda
+dentro del mismo marco galáctico que el monograma.
+
+#### Dónde NO se usa la foto
+
+Estos tres sitios usan las **iniciales** (`profile.initials`), no la imagen, y
+no cambian al subir tu foto:
+
+| Sitio | Archivo | Línea |
+|---|---|---|
+| Monograma de la barra lateral | [`src/components/layout/Header.astro`](src/components/layout/Header.astro) | 52 |
+| Favicon de la pestaña | `public/favicon.svg` | — |
+| Tarjeta al compartir en LinkedIn | `scripts/generar-og-image.mjs` | — |
+
+Es intencional: en un espacio de 46 px un monograma se lee mejor que una cara
+recortada. Si algún día quieres tu foto en la tarjeta de compartir, hay que
+tocar el script de la OG image.
+
+#### Mientras no subas nada
+
+Se dibuja un monograma **JG** con dos anillos orbitales girando. Es deliberado:
+antes eso que la foto de archivo que traía la plantilla, que es una persona que
+no eres.
 
 ---
 

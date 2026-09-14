@@ -41,9 +41,28 @@ export const profile = {
   phone: '322 609 6124',
   phoneRaw: '+573226096124', // formato E.164 para los enlaces tel: y wa.me
 
-  // Deja `photo` vacio y se pinta automaticamente un monograma con anillo
-  // orbital. Para usar tu foto: copiala a public/images/perfil.jpg y pon
-  // aqui '/images/perfil.jpg'.
+  // ---------------------------------------------------------------------
+  //  FOTO DE PERFIL
+  // ---------------------------------------------------------------------
+  //  Vacio ('')  -> se dibuja un monograma con las iniciales y dos anillos
+  //                 orbitales. Es el estado por defecto.
+  //  Con ruta    -> se muestra tu foto.
+  //
+  //  PARA PONER TU FOTO, DOS PASOS:
+  //    1. Copia el archivo a  public/images/perfil.jpg
+  //    2. Escribe aqui:       photo: '/images/perfil.jpg'
+  //
+  //  OJO CON LA RUTA: se escribe '/images/perfil.jpg', SIN 'public'.
+  //  Todo lo que hay en public/ se sirve desde la raiz del sitio.
+  //
+  //  Recomendado: imagen cuadrada, minimo 420x420 px, formato .jpg o .webp,
+  //  por debajo de 150 KB. Se recorta en circulo con object-fit: cover, asi
+  //  que encuadra tu cara centrada.
+  //
+  //  El unico componente que lee este campo es
+  //  src/components/sections/About.astro (seccion "Sobre mi").
+  //  La barra lateral y la tarjeta de compartir usan `initials`, no la foto.
+  // ---------------------------------------------------------------------
   photo: '',
   initials: 'JG',
 
