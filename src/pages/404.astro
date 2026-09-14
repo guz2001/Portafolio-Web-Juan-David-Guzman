@@ -1,0 +1,57 @@
+---
+/**
+ * ============================================================================
+ *  PAGINA 404
+ * ============================================================================
+ *  Astro convierte este archivo en 404.html, que es el nombre que GitHub
+ *  Pages, Netlify y Vercel buscan automaticamente para las rutas inexistentes.
+ *  Mantiene el fondo estelar y ofrece una salida clara al inicio.
+ * ============================================================================
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import { withBase } from '../utils/url.js';
+---
+
+<BaseLayout title="Página no encontrada — Juan David Guzmán Castro" showNav={false}>
+  <section class="notfound">
+    <div class="container notfound__inner">
+      <p class="notfound__code text-stela">404</p>
+      <h1 class="notfound__title">Esta página se perdió en el espacio</h1>
+      <p class="notfound__text">
+        La dirección que buscas no existe o cambió de sitio.
+      </p>
+      <a class="btn btn--primary" href={withBase("/")}>
+        <Icon name="home" size={16} />
+        Volver al inicio
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    position: relative;
+    z-index: var(--z-content);
+    display: grid;
+    place-items: center;
+    min-height: 80svh;
+    text-align: center;
+  }
+
+  .notfound__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .notfound__code {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 2rem + 12vw, 9rem);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .notfound__title { font-size: var(--text-2xl); }
+</style>

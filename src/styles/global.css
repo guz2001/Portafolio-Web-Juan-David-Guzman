@@ -1,0 +1,24 @@
+/* ============================================================================
+ *  GLOBAL  —  Unico punto de entrada de estilos
+ * ============================================================================
+ *  BaseLayout.astro importa solo este archivo. El orden de los @import es
+ *  deliberado y no debe alterarse:
+ *
+ *    1. fuentes     — se declaran antes de usarse
+ *    2. tokens      — definen las variables que el resto consume
+ *    3. reset       — limpia los estilos por defecto del navegador
+ *    4. base        — tipografia, layout y primitivos
+ *    5. animations  — keyframes y estados de revelado
+ *    6. islands     — estilos de los componentes React (ver el archivo)
+ * ========================================================================== */
+
+/* Fuentes variables auto-alojadas y recortadas al subconjunto latino.
+   Frente a Google Fonts esto evita una conexion DNS + TLS a un tercero en la
+   ruta critica. Ver src/styles/fonts.css para el detalle del recorte. */
+@import './fonts.css';
+
+@import './tokens.css';
+@import './reset.css';
+@import './base.css';
+@import './animations.css';
+@import './islands.css';

@@ -1,0 +1,6 @@
+# Permite la indexacion completa del portafolio.
+User-agent: *
+Allow: /
+
+# El sitemap lo genera @astrojs/sitemap en cada build.
+Sitemap: https://guz2001.github.io/portafolio/sitemap-index.xml

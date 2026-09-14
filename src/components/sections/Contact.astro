@@ -1,0 +1,271 @@
+---
+/**
+ * ============================================================================
+ *  SECCION CONTACTO
+ * ============================================================================
+ *  Canales directos siempre visibles y, opcionalmente, un formulario.
+ *
+ *  DECISION SOBRE EL FORMULARIO
+ *  La plantilla original enviaba a forms/contact.php. En un hosting estatico
+ *  —GitHub Pages, Netlify, Vercel— no hay interprete de PHP: ese formulario
+ *  se veria bien y no enviaria nada, que es peor que no tenerlo.
+ *  Aqui el formulario solo aparece si has configurado `contactFormEndpoint`
+ *  en src/config/site.js. Mientras este vacio, se muestran unicamente los
+ *  canales directos, que siempre funcionan.
+ *
+ *  MEJORA PROGRESIVA
+ *  El <form> lleva `action` y `method` reales: sin JavaScript envia igual, de
+ *  la forma clasica. El script solo mejora la experiencia enviandolo por
+ *  fetch y mostrando el resultado sin recargar la pagina.
+ * ============================================================================
+ */
+import { profile } from '../../data/index.js';
+import { site } from '../../config/site.js';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+
+const canales = [
+  {
+    icon: 'mail',
+    label: 'Correo electrónico',
+    value: profile.email,
+    href: `mailto:${profile.email}`,
+  },
+  {
+    icon: 'whatsapp',
+    label: 'WhatsApp',
+    value: profile.phone,
+    href: `https://wa.me/${profile.phoneRaw.replace('+', '')}`,
+  },
+  {
+    icon: 'linkedin',
+    label: 'LinkedIn',
+    value: '/in/juandavidguzmancastro',
+    href: 'https://linkedin.com/in/juandavidguzmancastro',
+  },
+  {
+    icon: 'github',
+    label: 'GitHub',
+    value: '@guz2001',
+    href: 'https://github.com/guz2001',
+  },
+];
+
+const hasForm = Boolean(site.contactFormEndpoint);
+---
+
+<section class="section" id="contacto" aria-labelledby="contacto-titulo">
+  <div class="container">
+    <SectionHeader
+      eyebrow="Hablemos"
+      title="Contacto"
+      subtitle="Disponible para trabajo remoto. Respondo por cualquiera de estos canales."
+      icon="mail"
+      id="contacto-titulo"
+    />
+
+    <div class:list={['contact', hasForm && 'contact--with-form']}>
+      <!-- ------------------------------------------------------ Canales -->
+      <ul class="contact-channels" role="list">
+        {canales.map((canal, index) => (
+          <li data-reveal data-reveal-group="contact" style={`--reveal-delay:${index * 60}ms`}>
+            <a
+              class="card contact-channel"
+              href={canal.href}
+              target={canal.href.startsWith('http') ? '_blank' : undefined}
+              rel={canal.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              <span class="contact-channel__icon"><Icon name={canal.icon} size={20} /></span>
+              <span class="contact-channel__body">
+                <span class="contact-channel__label">{canal.label}</span>
+                <span class="contact-channel__value">{canal.value}</span>
+              </span>
+              <Icon name="arrowRight" size={16} class="contact-channel__arrow" />
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- --------------------------------------------------- Formulario -->
+      {hasForm && (
+        <form
+          class="card contact-form"
+          action={site.contactFormEndpoint}
+          method="POST"
+          data-contact-form
+          data-reveal
+        >
+          <div class="field">
+            <label class="field__label" for="campo-nombre">Nombre</label>
+            <input class="field__input" id="campo-nombre" name="nombre" type="text" required autocomplete="name" />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="campo-email">Correo electrónico</label>
+            <input class="field__input" id="campo-email" name="email" type="email" required autocomplete="email" />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="campo-mensaje">Mensaje</label>
+            <textarea class="field__input" id="campo-mensaje" name="mensaje" rows="5" required></textarea>
+          </div>
+
+          <button class="btn btn--primary" type="submit">
+            Enviar mensaje
+            <Icon name="arrowRight" size={16} />
+          </button>
+
+          <!-- role="status" -> el resultado se anuncia sin robar el foco -->
+          <p class="contact-form__status" role="status" aria-live="polite" data-form-status></p>
+        </form>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { display: grid; gap: var(--space-6); }
+
+  .contact--with-form {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .contact--with-form { grid-template-columns: 1fr; }
+  }
+
+  .contact-channels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-channel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    height: 100%;
+  }
+
+  .contact-channel__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-border);
+    color: var(--color-plasma);
+  }
+
+  .contact-channel__body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+
+  .contact-channel__label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-dim);
+  }
+
+  .contact-channel__value {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  .contact-channel__arrow {
+    flex-shrink: 0;
+    color: var(--color-text-dim);
+    transition: transform var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-soft);
+  }
+
+  .contact-channel:hover .contact-channel__arrow {
+    transform: translateX(3px);
+    color: var(--color-plasma);
+  }
+
+  /* ------------------------------------------------------- Formulario */
+  .contact-form { display: flex; flex-direction: column; gap: var(--space-4); }
+
+  .field { display: flex; flex-direction: column; gap: var(--space-2); }
+
+  .field__label { font-size: var(--text-sm); color: var(--color-text-muted); }
+
+  .field__input {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    resize: vertical;
+    transition: border-color var(--duration-fast) var(--ease-soft);
+  }
+
+  .field__input:focus-visible {
+    border-color: hsl(var(--hsl-plasma) / 0.6);
+    outline-offset: 1px;
+  }
+
+  .contact-form__status:empty { display: none; }
+
+  .contact-form__status {
+    font-size: var(--text-sm);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .contact-form__status[data-state='ok']    { color: #6ee7b7; border-color: rgba(110, 231, 183, 0.35); }
+  .contact-form__status[data-state='error'] { color: #fca5a5; border-color: rgba(252, 165, 165, 0.35); }
+</style>
+
+<script>
+  /**
+   * Mejora progresiva del formulario.
+   * Si este script no llegara a ejecutarse, el <form> conserva `action` y
+   * `method`, asi que enviaria igual mediante una navegacion normal.
+   */
+  const form = document.querySelector('[data-contact-form]');
+
+  if (form instanceof HTMLFormElement) {
+    const status = form.querySelector('[data-form-status]');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!(status instanceof HTMLElement) || !(submitButton instanceof HTMLButtonElement)) return;
+
+      // Bloquear el boton evita el doble envio por doble clic
+      submitButton.disabled = true;
+      status.removeAttribute('data-state');
+      status.textContent = 'Enviando…';
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+
+        if (!response.ok) throw new Error(String(response.status));
+
+        status.setAttribute('data-state', 'ok');
+        status.textContent = '¡Mensaje enviado! Te responderé lo antes posible.';
+        form.reset();
+      } catch {
+        status.setAttribute('data-state', 'error');
+        status.textContent =
+          'No se pudo enviar. Escríbeme directamente a guz20dgc@gmail.com.';
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  }
+</script>

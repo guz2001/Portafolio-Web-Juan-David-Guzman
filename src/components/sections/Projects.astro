@@ -1,0 +1,40 @@
+---
+/**
+ * ============================================================================
+ *  SECCION PROYECTOS
+ * ============================================================================
+ *  Esta seccion es deliberadamente delgada: lee los datos y se los pasa a la
+ *  isla ProjectGallery. Toda la logica de filtrado vive en el componente
+ *  React y todos los contenidos en src/data/projects.js.
+ *
+ *  Es la separacion de responsabilidades llevada al caso concreto: para
+ *  publicar un proyecto nuevo NO se toca este archivo.
+ *
+ *  `client:visible` — React se descarga cuando la seccion asoma en pantalla.
+ *  El HTML de las tarjetas se genera en el build, asi que Google las indexa
+ *  y se leen aunque el JavaScript falle; lo unico que se pierde sin JS es el
+ *  filtro, y entonces se ven todos los proyectos, que es el estado correcto.
+ * ============================================================================
+ */
+import { projects, getProjectFilters } from '../../data/index.js';
+import SectionHeader from '../ui/SectionHeader.astro';
+import ProjectGallery from '../islands/ProjectGallery.jsx';
+
+const filters = getProjectFilters();
+---
+
+<section class="section" id="proyectos" aria-labelledby="proyectos-titulo">
+  <div class="container">
+    <SectionHeader
+      eyebrow="Trabajo"
+      title="Proyectos"
+      subtitle="Proyectos propios, con el código publicado y las decisiones técnicas explicadas."
+      icon="grid"
+      id="proyectos-titulo"
+    />
+
+    <div data-reveal>
+      <ProjectGallery projects={projects} filters={filters} client:visible />
+    </div>
+  </div>
+</section>

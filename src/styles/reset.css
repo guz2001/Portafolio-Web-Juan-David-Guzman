@@ -1,0 +1,44 @@
+/* ============================================================================
+ *  RESET  —  Normaliza el navegador antes de aplicar nuestro diseno
+ * ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* El desplazamiento suave se activa solo si el usuario no pidio lo contrario.
+     Ver la regla en base.css. */
+}
+
+body {
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+img { height: auto; }
+
+input, button, textarea, select { font: inherit; color: inherit; }
+
+/* Evita que una palabra tecnica larga rompa el layout en movil */
+p, h1, h2, h3, h4, h5, h6, li { overflow-wrap: break-word; }
+
+ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+:target { scroll-margin-top: 6rem; }

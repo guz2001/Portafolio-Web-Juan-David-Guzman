@@ -1,0 +1,47 @@
+---
+/**
+ * ============================================================================
+ *  SECCION ESTADISTICAS
+ * ============================================================================
+ *  Cifras verificables, todas respaldadas por el CV (ver src/data/stats.js).
+ *
+ *  `client:visible` en cada contador: React se descarga solo cuando la franja
+ *  entra en pantalla. Si el visitante nunca baja hasta aqui, nunca paga ese
+ *  coste. El numero final ya viene escrito en el HTML del build, asi que la
+ *  informacion esta disponible incluso sin JavaScript.
+ * ============================================================================
+ */
+import { stats } from '../../data/index.js';
+import CountUp from '../islands/CountUp.jsx';
+---
+
+<section class="section stats-section" aria-label="Cifras destacadas">
+  <div class="container">
+    <ul class="stats-grid" role="list">
+      {stats.map((stat, index) => (
+        <li data-reveal data-reveal-group="stats" style={`--reveal-delay:${index * 70}ms`}>
+          <CountUp
+            value={stat.value}
+            suffix={stat.suffix}
+            label={stat.label}
+            client:visible
+          />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* Franja mas estrecha que una seccion normal: es un dato de apoyo, no un
+     bloque de contenido con entidad propia. */
+  .stats-section { padding-block: clamp(2rem, 1rem + 3vw, 3.5rem); }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+</style>

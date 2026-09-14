@@ -1,0 +1,147 @@
+/* ============================================================================
+ *  TOKENS DE DISENO  —  La paleta "galaxia" y toda la escala visual
+ * ============================================================================
+ *  Ninguna otra hoja de estilos debe escribir un color, un tamano o un tiempo
+ *  a mano: todo sale de aqui. Si quieres cambiar el aspecto del sitio entero,
+ *  este es el unico archivo que tocas.
+ *
+ *  CONCEPTO DE LA PALETA
+ *  El fondo es espacio profundo (negro azulado), el texto es luz estelar
+ *  (blancos y grises), y el color aparece solo como "estela galactica":
+ *  violeta, cian y magenta en gradientes y acentos, nunca en bloques planos.
+ *  Asi el color subraya, no compite con el contenido.
+ * ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* --- Fondo: capas de espacio profundo, de mas lejos a mas cerca --------- */
+  --color-bg:            #05060b;  /* lienzo de la pagina */
+  --color-bg-alt:        #080a12;  /* secciones alternas, para dar ritmo */
+  --color-surface:       #0d101b;  /* tarjetas */
+  --color-surface-hover: #141827;  /* tarjetas al pasar el raton */
+  --color-surface-high:  #1a1f31;  /* elementos elevados: menus, chips */
+
+  /* --- Texto: luz estelar ------------------------------------------------ */
+  --color-text:       #f2f4fa;  /* titulos y texto principal */
+  --color-text-muted: #a8aec4;  /* parrafos secundarios */
+  --color-text-dim:   #6e7690;  /* metadatos, fechas, pies */
+
+  /* --- Bordes: polvo estelar, siempre translucidos ------------------------ */
+  --color-border:        rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+
+  /* --- Estela galactica: los tres acentos --------------------------------- */
+  --color-nebula:  #7c5cff;  /* violeta — acento primario */
+  --color-plasma:  #45d6f5;  /* cian    — acento secundario */
+  --color-quasar:  #e26bd0;  /* magenta — acento terciario */
+
+  /* Versiones HSL sueltas, para componer rgba/hsla con opacidad variable */
+  --hsl-nebula: 253 100% 68%;
+  --hsl-plasma: 192 89% 62%;
+  --hsl-quasar: 313 68% 65%;
+
+  /* --- Gradientes: la "estela" propiamente dicha -------------------------- */
+  --gradient-stela: linear-gradient(
+    115deg,
+    var(--color-nebula) 0%,
+    var(--color-plasma) 50%,
+    var(--color-quasar) 100%
+  );
+  --gradient-text: linear-gradient(
+    100deg,
+    #ffffff 0%,
+    #cfd6ff 35%,
+    var(--color-plasma) 70%,
+    var(--color-nebula) 100%
+  );
+  /* Halo radial que se usa detras del hero y de las tarjetas destacadas */
+  --gradient-halo: radial-gradient(
+    60% 60% at 50% 0%,
+    hsl(var(--hsl-nebula) / 0.22) 0%,
+    hsl(var(--hsl-plasma) / 0.08) 45%,
+    transparent 75%
+  );
+
+  /* --- Tipografia -------------------------------------------------------- */
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk',
+                  ui-sans-serif, system-ui, sans-serif;
+  --font-body:    'Inter Variable', 'Inter',
+                  ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    ui-monospace, 'JetBrains Mono', 'Fira Code', 'Cascadia Code',
+                  Menlo, Consolas, monospace;
+
+  /* Escala tipografica fluida: crece con el viewport sin media queries.
+     clamp(minimo, preferido-segun-ancho, maximo). */
+  --text-xs:   0.78rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   clamp(1.06rem, 0.99rem + 0.35vw, 1.2rem);
+  --text-xl:   clamp(1.25rem, 1.12rem + 0.6vw,  1.5rem);
+  --text-2xl:  clamp(1.55rem, 1.32rem + 1.1vw,  2.1rem);
+  --text-3xl:  clamp(2rem,    1.6rem  + 1.9vw,  3rem);
+  --text-4xl:  clamp(2.5rem,  1.8rem  + 3.3vw,  4.5rem);
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-normal: 1.65;
+
+  /* --- Espaciado: escala de 4 px ----------------------------------------- */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.5rem;
+  --space-6:  2rem;
+  --space-7:  3rem;
+  --space-8:  4rem;
+  --space-9:  6rem;
+  --space-10: 8rem;
+
+  /* Aire vertical de cada <section>, fluido entre movil y escritorio */
+  --section-padding: clamp(3.5rem, 2rem + 6vw, 7rem);
+  --content-width: 1180px;
+  --sidebar-width: 280px;   /* ancho de la barra lateral fija en escritorio */
+  --sidebar-breakpoint: 1200px;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+
+  /* --- Radios ------------------------------------------------------------ */
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   18px;
+  --radius-xl:   26px;
+  --radius-full: 999px;
+
+  /* --- Sombras: en el espacio no hay sombras, hay resplandores ------------ */
+  --shadow-sm:   0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md:   0 8px 24px -8px rgb(0 0 0 / 0.7);
+  --shadow-lg:   0 24px 60px -20px rgb(0 0 0 / 0.85);
+  --glow-nebula: 0 0 0 1px hsl(var(--hsl-nebula) / 0.35),
+                 0 12px 40px -12px hsl(var(--hsl-nebula) / 0.55);
+  --glow-plasma: 0 0 0 1px hsl(var(--hsl-plasma) / 0.35),
+                 0 12px 40px -12px hsl(var(--hsl-plasma) / 0.45);
+
+  /* --- Movimiento -------------------------------------------------------- */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);   /* entradas: rapido y frena */
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);    /* cambios de estado */
+  --duration-fast:   160ms;
+  --duration-normal: 320ms;
+  --duration-slow:   680ms;
+
+  /* --- Capas (z-index): centralizadas para no adivinar numeros ----------- */
+  --z-starfield: 0;
+  --z-content:   1;
+  --z-header:    50;
+  --z-drawer:    60;
+  --z-skiplink:  100;
+}
+
+/* Quien pida menos movimiento recibe la misma pagina, sin animaciones.
+   Requisito WCAG 2.3.3 y, ademas, ahorra bateria. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast:   1ms;
+    --duration-normal: 1ms;
+    --duration-slow:   1ms;
+  }
+}

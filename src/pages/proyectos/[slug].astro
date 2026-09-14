@@ -1,0 +1,248 @@
+---
+/**
+ * ============================================================================
+ *  PAGINA DE DETALLE DE PROYECTO  —  /proyectos/<slug>/
+ * ============================================================================
+ *  RUTA DINAMICA
+ *  Los corchetes del nombre del archivo indican a Astro que `slug` es un
+ *  parametro. getStaticPaths() le dice que valores existen, y Astro genera en
+ *  el build un HTML independiente por cada proyecto.
+ *
+ *  LO IMPORTANTE: las paginas se generan SOLAS.
+ *  Cuando anadas un proyecto a src/data/projects.js, su pagina de detalle
+ *  aparece en la siguiente compilacion. No hay que crear ningun archivo ni
+ *  registrar la ruta en ninguna parte. Es la ventaja concreta de tener los
+ *  datos separados de la presentacion.
+ *
+ *  Al ser HTML estatico, cada proyecto tiene su propia URL indexable y
+ *  compartible en LinkedIn con su propia tarjeta de vista previa.
+ * ============================================================================
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { projects, getCategoryLabel } from '../../data/index.js';
+import Icon from '../../components/ui/Icon.astro';
+import ProjectCover from '../../components/islands/ProjectCover.jsx';
+import { homeAnchor } from '../../utils/url.js';
+
+/**
+ * Declara una ruta por cada proyecto. Se ejecuta en el build, nunca en el
+ * navegador.
+ */
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<BaseLayout
+  title={`${project.title} — Juan David Guzmán Castro`}
+  description={project.tagline}
+  showNav={false}
+>
+  <article class="project-detail">
+    <div class="container">
+      <!-- Volver. Va arriba y es el primer elemento tabulable del contenido:
+           en una pagina de detalle, salir es la accion mas probable. -->
+      <a class="project-detail__back" href={homeAnchor("proyectos")}>
+        <Icon name="arrowRight" size={16} class="project-detail__back-icon" />
+        Volver a proyectos
+      </a>
+
+      <header class="project-detail__head">
+        <p class="project-detail__year">{project.year}</p>
+        <h1 class="project-detail__title text-stela">{project.title}</h1>
+        <p class="project-detail__tagline">{project.tagline}</p>
+
+        <ul class="chip-list" role="list">
+          {project.categories.map((category) => (
+            <li class="chip chip--accent">{getCategoryLabel(category)}</li>
+          ))}
+        </ul>
+      </header>
+
+      <div class="project-detail__cover">
+        <ProjectCover
+          title={project.title}
+          slug={project.slug}
+          accent={project.accent}
+          cover={project.cover}
+        />
+      </div>
+
+      <div class="project-detail__body">
+        <section class="project-detail__block" aria-labelledby="desc-titulo">
+          <h2 class="project-detail__subtitle" id="desc-titulo">Descripción</h2>
+          <p class="project-detail__text">{project.description}</p>
+        </section>
+
+        <section class="project-detail__block" aria-labelledby="dec-titulo">
+          <h2 class="project-detail__subtitle" id="dec-titulo">Decisiones técnicas</h2>
+          <ul class="project-detail__list" role="list">
+            {project.highlights.map((highlight) => (
+              <li>
+                <Icon name="check" size={16} />
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <aside class="project-detail__aside">
+          <section aria-labelledby="stack-titulo">
+            <h2 class="project-detail__subtitle" id="stack-titulo">Stack</h2>
+            <ul class="chip-list" role="list">
+              {project.stack.map((tech) => <li class="chip">{tech}</li>)}
+            </ul>
+          </section>
+
+          <section aria-labelledby="enlaces-titulo">
+            <h2 class="project-detail__subtitle" id="enlaces-titulo">Enlaces</h2>
+            <ul class="project-detail__links" role="list">
+              {project.links.map((link) => (
+                <li>
+                  <a class="btn btn--ghost" href={link.href} target="_blank" rel="noopener noreferrer">
+                    <Icon name={link.icon} size={16} />
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .project-detail {
+    position: relative;
+    z-index: var(--z-content);
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  }
+
+  .project-detail__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+    transition: color var(--duration-fast) var(--ease-soft);
+  }
+
+  .project-detail__back:hover { color: var(--color-plasma); }
+
+  /* La flecha de "volver" es la misma de "avanzar", girada: un icono menos */
+  .project-detail__back-icon { transform: rotate(180deg); }
+
+  .project-detail__head { max-width: 46rem; margin-bottom: var(--space-6); }
+
+  .project-detail__year {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.16em;
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-2);
+  }
+
+  .project-detail__title { font-size: var(--text-3xl); margin-bottom: var(--space-3); }
+
+  .project-detail__tagline {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-4);
+  }
+
+  .project-detail__cover {
+    aspect-ratio: 21 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--space-7);
+  }
+
+  .project-detail__cover :global(svg),
+  .project-detail__cover :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-detail__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: clamp(2rem, 1rem + 4vw, 4rem);
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .project-detail__body { grid-template-columns: 1fr; }
+  }
+
+  .project-detail__block { margin-bottom: var(--space-6); }
+
+  .project-detail__subtitle {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-plasma);
+    margin-bottom: var(--space-3);
+  }
+
+  .project-detail__text {
+    font-size: var(--text-lg);
+    line-height: var(--leading-normal);
+  }
+
+  .project-detail__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+
+  .project-detail__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+
+  .project-detail__list :global(svg) {
+    flex-shrink: 0;
+    margin-top: 0.15em;
+    color: var(--color-plasma);
+  }
+
+  .project-detail__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    /* En escritorio la ficha acompana al usuario mientras lee */
+    position: sticky;
+    top: var(--space-5);
+  }
+
+  @media (max-width: 900px) {
+    .project-detail__aside { position: static; }
+  }
+
+  .project-detail__links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+</style>

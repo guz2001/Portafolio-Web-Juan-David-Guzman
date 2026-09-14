@@ -1,0 +1,141 @@
+---
+/**
+ * ============================================================================
+ *  BASE LAYOUT  —  El esqueleto HTML de todas las paginas
+ * ============================================================================
+ *  Centraliza lo que debe ser identico en cada pagina:
+ *    · <head> completo: meta, SEO, Open Graph, datos estructurados
+ *    · importacion unica de los estilos globales
+ *    · fondo estelar, cabecera, pie y enlace de salto
+ *
+ *  Una pagina nueva solo tiene que envolver su contenido en <BaseLayout> y
+ *  hereda SEO y accesibilidad correctos sin copiar nada.
+ * ============================================================================
+ */
+import '../styles/global.css';
+
+import { site } from '../config/site.js';
+import { profile } from '../data/index.js';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import Starfield from '../components/ui/Starfield.astro';
+import { withBase } from '../utils/url.js';
+
+/**
+ * @typedef {Object} Props
+ * @property {string}  [title]        Titulo de la pestana. Por defecto, el del sitio.
+ * @property {string}  [description]  Meta description propia de la pagina.
+ * @property {boolean} [showNav]      false oculta el menu (paginas de detalle).
+ */
+const {
+  title = site.title,
+  description = site.description,
+  showNav = true,
+} = Astro.props;
+
+// URL canonica: le dice a Google cual es la direccion "oficial" de esta
+// pagina y evita que la indexe dos veces (con y sin barra final, por ejemplo).
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const ogImageUrl = new URL(site.ogImage, Astro.site ?? site.url).href;
+
+/**
+ * Datos estructurados schema.org.
+ * Es lo que permite a Google entender que esta pagina describe a una PERSONA
+ * concreta —con su puesto, su ciudad y sus perfiles— y no un texto cualquiera.
+ * Alimenta el panel de conocimiento y mejora como aparece en los resultados.
+ */
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.role,
+  email: `mailto:${profile.email}`,
+  telephone: profile.phoneRaw,
+  url: site.url,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Pereira',
+    addressRegion: 'Risaralda',
+    addressCountry: 'CO',
+  },
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Universidad Libre Seccional Pereira',
+  },
+  knowsAbout: site.keywords,
+  sameAs: profile.socials
+    .filter((social) => social.href.startsWith('http'))
+    .map((social) => social.href),
+};
+---
+
+<!doctype html>
+<!-- La clase no-js se elimina en cuanto corre el primer script. Sirve para
+     que, si el JavaScript falla, el CSS deje todo el contenido visible. -->
+<html lang={site.lang} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta name="author" content={profile.name} />
+    <meta name="theme-color" content={site.themeColor} />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph: controla la tarjeta al compartir en LinkedIn o WhatsApp -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
+    <link rel="sitemap" href={withBase("/sitemap-index.xml")} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+    <!-- Script en linea y sincrono a proposito: quitar .no-js debe ocurrir
+         antes del primer pintado para que no haya parpadeo de contenido. -->
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+    </script>
+  </head>
+
+  <body>
+    <!-- Primer elemento tabulable: permite a quien navega con teclado saltarse
+         el menu y llegar al contenido de una sola pulsacion (WCAG 2.4.1). -->
+    <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+
+    <Starfield />
+
+    {showNav && <Header />}
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      // Comportamientos globales. Se cargan como modulo: el navegador los
+      // difiere solo, sin bloquear el renderizado.
+      import { initReveal } from '../scripts/reveal.js';
+      import { initScrollSpy } from '../scripts/scrollSpy.js';
+
+      initReveal();
+      initScrollSpy();
+    </script>
+  </body>
+</html>

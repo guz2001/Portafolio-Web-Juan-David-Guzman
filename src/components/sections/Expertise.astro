@@ -1,0 +1,95 @@
+---
+/**
+ * ============================================================================
+ *  SECCION ESPECIALIZACION
+ * ============================================================================
+ *  Sustituye a la seccion "Servicios" de la plantilla original.
+ *  Motivo: "Servicios" habla el idioma del freelance ("contrata mis horas").
+ *  Para una busqueda de empleo lo util es responder a la pregunta que se hace
+ *  el reclutador: "¿en que frentes puedo ponerlo a trabajar desde ya?".
+ *
+ *  El contenido sale de src/data/expertise.js y cada area declara las
+ *  tecnologias concretas que la respaldan: sin palabras concretas, un area
+ *  de especializacion es solo una afirmacion.
+ * ============================================================================
+ */
+import { expertiseAreas } from '../../data/index.js';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<section class="section section--alt" id="especializacion" aria-labelledby="especializacion-titulo">
+  <div class="container">
+    <SectionHeader
+      eyebrow="Enfoque"
+      title="Áreas de especialización"
+      subtitle="Los frentes en los que puedo aportar desde la primera semana."
+      icon="star"
+      id="especializacion-titulo"
+    />
+
+    <ul class="expertise-grid" role="list">
+      {expertiseAreas.map((area, index) => (
+        <li>
+          <article
+            class="card expertise-card"
+            data-reveal
+            data-reveal-group="expertise"
+            style={`--reveal-delay:${index * 60}ms`}
+          >
+            <span class="expertise-card__icon"><Icon name={area.icon} size={20} /></span>
+            <h3 class="expertise-card__title">{area.title}</h3>
+            <p class="expertise-card__text">{area.description}</p>
+
+            <ul class="chip-list expertise-card__keywords" role="list">
+              {area.keywords.map((keyword) => <li class="chip">{keyword}</li>)}
+            </ul>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .expertise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  .expertise-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    height: 100%;
+  }
+
+  .expertise-card__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+      140deg,
+      hsl(var(--hsl-nebula) / 0.25),
+      hsl(var(--hsl-quasar) / 0.12)
+    );
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  .expertise-card__title { font-size: var(--text-lg); }
+
+  .expertise-card__text {
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    flex: 1; /* empuja los chips al fondo: todas las tarjetas los alinean */
+  }
+
+  .expertise-card__keywords { margin-top: var(--space-2); }
+</style>

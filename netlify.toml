@@ -1,0 +1,48 @@
+# ============================================================================
+#  CONFIGURACION DE NETLIFY
+# ============================================================================
+#  Con este archivo en la raiz, Netlify no pregunta nada: detecta el comando
+#  de build y la carpeta de publicacion al conectar el repositorio.
+# ============================================================================
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# ----------------------------------------------------------------------------
+#  CABECERAS DE SEGURIDAD
+#  Netlify las aplica a cada respuesta. Son gratis y cierran los agujeros
+#  clasicos de un sitio estatico.
+# ----------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Impide que el navegador "adivine" el tipo de un archivo y lo ejecute
+    X-Content-Type-Options = "nosniff"
+    # Bloquea que otro sitio incruste el portafolio en un iframe (clickjacking)
+    X-Frame-Options = "DENY"
+    # Al salir a otro dominio solo se envia el origen, no la URL completa
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Se desactivan APIs del navegador que este sitio no usa
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+# ----------------------------------------------------------------------------
+#  CACHE DE LOS ASSETS CON HASH
+#  Los archivos de /_astro/ llevan un hash en el nombre: si el contenido
+#  cambia, cambia el nombre. Por eso se pueden cachear un ano entero sin
+#  riesgo de servir algo obsoleto. Es lo que hace que la segunda visita sea
+#  practicamente instantanea.
+# ----------------------------------------------------------------------------
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# El HTML nunca se cachea de forma permanente: debe reflejar cada despliegue.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

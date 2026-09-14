@@ -1,0 +1,197 @@
+---
+/**
+ * ============================================================================
+ *  SECCION HERO  —  Primera pantalla
+ * ============================================================================
+ *  Tiene un unico trabajo: que en los tres primeros segundos quede claro
+ *  quien eres, que haces y donde estas. Por eso lleva nombre, titulo rotativo,
+ *  ubicacion, disponibilidad y dos acciones claras.
+ *
+ *  RENDIMIENTO — aqui se juega el LCP (Largest Contentful Paint)
+ *  El elemento mas grande de esta pantalla es el <h1>, que es TEXTO. Se pinta
+ *  con el primer fotograma, sin esperar ninguna imagen. La plantilla original
+ *  usaba una foto de fondo a pantalla completa (hero-bg.jpg, 180 KB) y eso
+ *  convertia la imagen en el LCP, retrasandolo varios cientos de milisegundos.
+ *  Aqui el fondo es el campo estelar, que se carga despues y no bloquea nada.
+ *
+ *  LA ISLA TYPEWRITER USA `client:idle`, NO `client:load`
+ *  Con `client:load` el navegador descargaria React (~65 KB comprimidos) de
+ *  inmediato, compitiendo con el primer pintado por un efecto decorativo.
+ *  Con `client:idle` espera a que el hilo principal quede libre: el hero se
+ *  pinta primero y la animacion arranca despues, sin que se note el cambio.
+ *  El primer titulo ya viene escrito en el HTML del build, asi que durante
+ *  esa espera no hay ningun hueco vacio.
+ * ============================================================================
+ */
+import { profile } from '../../data/index.js';
+import Icon from '../ui/Icon.astro';
+import TypeWriter from '../islands/TypeWriter.jsx';
+---
+
+<section class="section hero" id="inicio" aria-labelledby="hero-titulo">
+  <div class="container hero__inner">
+    <!-- Estado de disponibilidad -->
+    <p class="hero__badge" data-reveal>
+      <span class="hero__pulse" aria-hidden="true"></span>
+      {profile.availability}
+    </p>
+
+    <h1 class="hero__title" id="hero-titulo" data-reveal style="--reveal-delay:80ms">
+      {profile.name}
+    </h1>
+
+    <p class="hero__role" data-reveal style="--reveal-delay:160ms">
+      <TypeWriter phrases={profile.roleRotation} client:idle />
+    </p>
+
+    <p class="hero__location" data-reveal style="--reveal-delay:220ms">
+      <Icon name="location" size={16} />
+      {profile.location}
+    </p>
+
+    <div class="hero__actions" data-reveal style="--reveal-delay:300ms">
+      <a class="btn btn--primary" href="#proyectos">
+        Ver proyectos
+        <Icon name="arrowRight" size={16} />
+      </a>
+      <a class="btn btn--ghost" href="#contacto">
+        <Icon name="mail" size={16} />
+        Contactar
+      </a>
+    </div>
+  </div>
+
+  <!-- Indicador de scroll. Decorativo: la navegacion real esta en el menu. -->
+  <a class="hero__scroll" href="#sobre-mi" aria-label="Ir a la sección Sobre mí">
+    <Icon name="arrowDown" size={18} />
+  </a>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    place-items: center;
+    /* min-height y no height: si el contenido creciera, la seccion crece con
+       el, en vez de recortarlo. 100svh usa la altura *pequena* del viewport,
+       que es la correcta en moviles cuando la barra del navegador esta
+       visible; con 100vh el contenido quedaria cortado. */
+    min-height: 100svh;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  /* Halo de luz sobre el hero: refuerza la idea de estar mirando al espacio */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-halo);
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    max-width: 56rem;
+  }
+
+  /* ------------------------------------------------------------- Badge */
+  .hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .hero__pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-full);
+    background: #3ddc97;
+    box-shadow: 0 0 0 0 rgba(61, 220, 151, 0.7);
+    animation: pulse 2.4s var(--ease-soft) infinite;
+  }
+
+  @keyframes pulse {
+    70%  { box-shadow: 0 0 0 9px rgba(61, 220, 151, 0); }
+    100% { box-shadow: 0 0 0 0  rgba(61, 220, 151, 0); }
+  }
+
+  /* -------------------------------------------------------------- Texto */
+  .hero__title {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+
+  .hero__role {
+    /* min-height reserva la altura de dos lineas: sin esto, cada vez que el
+       texto rotativo cambia de longitud y salta de linea, todo lo de abajo
+       se desplaza y el CLS (Cumulative Layout Shift) se dispara. */
+    min-height: 2.6em;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  .hero__location {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-dim);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  /* ------------------------------------------------------------ Scroll */
+  .hero__scroll {
+    position: absolute;
+    bottom: var(--space-6);
+    left: 50%;
+    translate: -50% 0;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-dim);
+    transition: color var(--duration-fast) var(--ease-soft),
+                border-color var(--duration-fast) var(--ease-soft);
+  }
+
+  .hero__scroll:hover {
+    color: var(--color-plasma);
+    border-color: hsl(var(--hsl-plasma) / 0.5);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__scroll { animation: float 2.8s var(--ease-soft) infinite; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(7px); }
+    }
+  }
+
+  /* En pantallas bajas (moviles apaisados) la flecha estorba */
+  @media (max-height: 620px) {
+    .hero__scroll { display: none; }
+  }
+</style>

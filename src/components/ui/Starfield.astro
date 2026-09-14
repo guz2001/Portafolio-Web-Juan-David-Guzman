@@ -1,0 +1,110 @@
+---
+/**
+ * ============================================================================
+ *  STARFIELD  —  Fondo galactico de toda la pagina
+ * ============================================================================
+ *  Tres capas superpuestas, de atras hacia delante:
+ *
+ *    1. Gradiente base      CSS puro, se pinta con el primer fotograma.
+ *    2. Nebulosas           dos manchas radiales borrosas que derivan muy
+ *                           despacio; dan la sensacion de profundidad.
+ *    3. Canvas de estrellas dibujado por src/scripts/starfield.js.
+ *
+ *  Todo el conjunto es DECORATIVO: va en position:fixed detras del contenido,
+ *  con aria-hidden, y no captura clics (pointer-events:none). Si el canvas no
+ *  llegara a cargar, quedan las dos primeras capas y el fondo sigue siendo
+ *  correcto: la pagina nunca depende del JavaScript para verse bien.
+ * ============================================================================
+ */
+---
+
+<div class="starfield" aria-hidden="true">
+  <div class="starfield__base"></div>
+  <div class="nebula-blob nebula-blob--violet"></div>
+  <div class="nebula-blob nebula-blob--cyan"></div>
+  <canvas class="starfield__canvas" data-starfield></canvas>
+</div>
+
+<style>
+  .starfield {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-starfield);
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* Capa 1 — gradiente base: el "vacio" con un halo mas claro arriba */
+  .starfield__base {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #10142a 0%, transparent 55%),
+      radial-gradient(90% 60% at 85% 15%, #141033 0%, transparent 60%),
+      var(--color-bg);
+  }
+
+  /* Capa 2 — nebulosas. El desenfoque grande es lo que las convierte en gas
+     en lugar de en circulos de color. */
+  .nebula-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.5;
+    will-change: transform;
+  }
+
+  .nebula-blob--violet {
+    width: 46vw;
+    height: 46vw;
+    max-width: 620px;
+    max-height: 620px;
+    top: -12vh;
+    left: -8vw;
+    background: radial-gradient(circle, hsl(var(--hsl-nebula) / 0.55), transparent 68%);
+    animation: drift 26s var(--ease-soft) infinite;
+  }
+
+  .nebula-blob--cyan {
+    width: 38vw;
+    height: 38vw;
+    max-width: 520px;
+    max-height: 520px;
+    top: 22vh;
+    right: -10vw;
+    background: radial-gradient(circle, hsl(var(--hsl-plasma) / 0.38), transparent 68%);
+    animation: drift 34s var(--ease-soft) infinite reverse;
+  }
+
+  /* Capa 3 — canvas de estrellas */
+  .starfield__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* En moviles las nebulosas se reducen: un blur de 90px sobre media pantalla
+     es de lo mas caro que puede pintar una GPU movil. */
+  @media (max-width: 640px) {
+    .nebula-blob { filter: blur(60px); opacity: 0.38; }
+  }
+</style>
+
+<script>
+  // Se importa dinamicamente y solo cuando el navegador esta ocioso: el fondo
+  // es decorativo, asi que no debe competir con el contenido por la CPU
+  // durante la carga inicial.
+  import { initStarfield } from '../../scripts/starfield.js';
+
+  const start = () => {
+    const canvas = document.querySelector('[data-starfield]');
+    if (canvas instanceof HTMLCanvasElement) initStarfield(canvas);
+  };
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(start, { timeout: 1200 });
+  } else {
+    setTimeout(start, 200);
+  }
+</script>

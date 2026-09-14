@@ -1,0 +1,73 @@
+/* ============================================================================
+ *  ANIMACIONES
+ * ============================================================================
+ *  Regla de oro de rendimiento: solo se animan `transform` y `opacity`.
+ *  Son las dos unicas propiedades que el navegador resuelve en la GPU sin
+ *  recalcular el layout, lo que mantiene los 60 fps incluso en moviles.
+ *  Animar `width`, `top` o `margin` provocaria reflow en cada fotograma.
+ * ========================================================================== */
+
+/* --- Entrada al hacer scroll (la aplica src/scripts/reveal.js) ------------ */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* --- Rotacion lenta del anillo orbital del avatar ------------------------- */
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* --- Deriva de las nebulosas de fondo ------------------------------------ */
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(3%, -4%, 0) scale(1.08); }
+}
+
+/* --- Barrido de luz sobre el gradiente de texto --------------------------- */
+@keyframes sweep {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+/* --- Parpadeo del cursor del efecto maquina de escribir ------------------- */
+@keyframes blink {
+  0%, 45%   { opacity: 1; }
+  50%, 95%  { opacity: 0; }
+  100%      { opacity: 1; }
+}
+
+/* --- Crecimiento de las barras de habilidad ------------------------------- */
+@keyframes grow-bar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(var(--bar-scale, 1)); }
+}
+
+/* ---------------------------------------------------------------------------
+ *  Estado inicial de los elementos revelables.
+ *  Se marca `data-reveal` en el HTML; reveal.js anade `data-revealed` cuando
+ *  el elemento entra en pantalla. Si el JavaScript fallara o estuviera
+ *  desactivado, la regla `.no-js` de base.css los deja visibles: el contenido
+ *  nunca depende del JavaScript para poder leerse.
+ * ------------------------------------------------------------------------- */
+[data-reveal] {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+[data-reveal][data-revealed] {
+  animation: reveal-up var(--duration-slow) var(--ease-out) forwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal][data-revealed] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  /* Las animaciones decorativas continuas se detienen por completo */
+  .orbit-ring, .nebula-blob, .type-cursor { animation: none !important; }
+}

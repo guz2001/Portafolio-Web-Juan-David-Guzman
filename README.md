@@ -13,6 +13,7 @@ npm install       # solo la primera vez
 npm run dev       # http://localhost:4321 — recarga al guardar
 npm run build     # genera dist/ listo para publicar
 npm run preview   # sirve dist/ como lo haría el hosting real
+npm run og        # regenera la tarjeta de vista previa al compartir
 ```
 
 Requiere **Node 18 o superior** (verificado con Node 22).
@@ -86,6 +87,18 @@ Todo vive en [`src/data/`](src/data/). Ningún componente contiene texto tuyo.
 | SEO, dominio, menú | `src/config/site.js` |
 | Colores, tipografía, espaciado | `src/styles/tokens.css` |
 
+### Regenerar la tarjeta al compartir
+
+`public/og-image.png` (1200×630) es lo que se ve al pegar el enlace en
+LinkedIn o WhatsApp. Se genera desde `src/data/profile.js`, así que si cambias
+tu título profesional o tu disponibilidad:
+
+```bash
+npm run og
+```
+
+El diseño vive en `scripts/generar-og-image.mjs`.
+
 ### Poner tu foto
 
 1. Copia la foto a `public/images/perfil.jpg` (cuadrada, mínimo 420×420 px).
@@ -98,30 +111,52 @@ Es deliberado: antes eso que la foto de archivo de una persona que no eres.
 
 ## Publicar
 
-### Opción A — Netlify o Vercel (lo más simple)
+### Opción A — Netlify (recomendada)
 
-Sube el repositorio a GitHub y conéctalo. Detectan Astro solos:
+El repositorio ya trae `netlify.toml`, así que Netlify no pregunta nada:
+detecta el comando de build, la carpeta de publicación, Node 22, las cabeceras
+de seguridad y la caché de los assets.
 
-- Comando de build: `npm run build`
-- Carpeta de publicación: `dist`
+1. `git push` del proyecto a GitHub.
+2. En [app.netlify.com](https://app.netlify.com) → **Add new site → Import an
+   existing project** → elige el repositorio. Deja todo como viene.
+3. Sale una URL tipo `nombre-aleatorio.netlify.app`. Renómbrala en
+   **Site configuration → Change site name** a algo como
+   `juandavidguzman.netlify.app`.
+4. **Paso que no hay que olvidar** — pon esa URL en `src/config/site.js`:
 
-En `src/config/site.js` pon tu dominio final:
+   ```js
+   url:  'https://juandavidguzman.netlify.app',
+   base: '/',
+   ```
 
-```js
-url:  'https://tudominio.com',
-base: '/',
-```
+   Y haz push otra vez. De ese valor dependen la URL canónica, el sitemap y la
+   tarjeta de vista previa al compartir. Mientras apunte al dominio anterior,
+   quien comparta el enlace verá una imagen que no carga.
 
-### Opción B — GitHub Pages en un repositorio normal
+A partir de ahí, **cada `git push` redespliega solo** en unos 30 segundos.
 
-El sitio queda en `guz2001.github.io/portafolio/`, o sea **en una subcarpeta**.
-Hay que decírselo a Astro o todos los enlaces internos apuntarán mal:
+> Con un dominio propio: **Domain management → Add a domain**. El certificado
+> HTTPS lo emite Netlify gratis. Recuerda actualizar `url` también.
+
+### Opción B — GitHub Pages en este repositorio
+
+El repositorio ya configurado es
+[`guz2001/Portafolio-Web-Juan-David-Guzman`](https://github.com/guz2001/Portafolio-Web-Juan-David-Guzman),
+así que GitHub Pages lo serviría en
+`guz2001.github.io/Portafolio-Web-Juan-David-Guzman/` — es decir, **en una
+subcarpeta**. Hay que decírselo a Astro o todos los enlaces internos apuntarán
+mal:
 
 ```js
 // src/config/site.js
 url:  'https://guz2001.github.io',
-base: '/portafolio/',           // ← con las dos barras
+base: '/Portafolio-Web-Juan-David-Guzman/',   // ← con las dos barras
 ```
+
+> Si prefieres una URL más corta, renombra el repositorio a `portafolio` y pon
+> `base: '/portafolio/'`. O, mejor todavía, crea el repositorio especial
+> `guz2001.github.io`: ese se sirve en la raíz y puedes dejar `base: '/'`.
 
 Luego crea `.github/workflows/deploy.yml`:
 

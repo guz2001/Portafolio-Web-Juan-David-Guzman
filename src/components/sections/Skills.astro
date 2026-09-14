@@ -1,0 +1,151 @@
+---
+/**
+ * ============================================================================
+ *  SECCION HABILIDADES
+ * ============================================================================
+ *  Competencias agrupadas por dominio, con barra de nivel.
+ *
+ *  LAS BARRAS SON HTML SEMANTICO, NO DECORACION
+ *  Cada barra es un elemento con role="meter" y sus atributos aria-valuenow,
+ *  aria-valuemin y aria-valuemax. Un lector de pantalla anuncia literalmente
+ *  "Asterisk, 85 de 100". Un simple <div> con un ancho en CSS —como hacia la
+ *  plantilla original— seria invisible para quien no ve la pantalla.
+ *
+ *  LA ANIMACION USA scaleX, NO width
+ *  Animar `width` obliga al navegador a recalcular el layout en cada
+ *  fotograma. `transform: scaleX()` se resuelve en la GPU. Se ve igual y no
+ *  cuesta nada.
+ * ============================================================================
+ */
+import { skillCategories } from '../../data/index.js';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<section class="section" id="habilidades" aria-labelledby="habilidades-titulo">
+  <div class="container">
+    <SectionHeader
+      eyebrow="Stack"
+      title="Habilidades técnicas"
+      subtitle="Agrupadas por dominio. El nivel refleja mi grado de autonomía real en cada tecnología, no una aspiración."
+      icon="chart"
+      id="habilidades-titulo"
+    />
+
+    <div class="skills-grid">
+      {skillCategories.map((category, index) => (
+        <article
+          class="card skill-card"
+          data-reveal
+          data-reveal-group="skills"
+          style={`--reveal-delay:${index * 60}ms`}
+        >
+          <header class="skill-card__head">
+            <span class="skill-card__icon"><Icon name={category.icon} size={18} /></span>
+            <h3 class="skill-card__title">{category.title}</h3>
+          </header>
+
+          <ul class="skill-list" role="list">
+            {category.skills.map((skill) => (
+              <li class="skill">
+                <div class="skill__row">
+                  <span class="skill__name">{skill.name}</span>
+                  <span class="skill__level">{skill.level}%</span>
+                </div>
+
+                <div
+                  class="skill__track"
+                  role="meter"
+                  aria-valuenow={skill.level}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-label={`Nivel en ${skill.name}`}
+                >
+                  <span class="skill__fill" style={`--bar-scale:${skill.level / 100}`}></span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+    gap: var(--space-5);
+  }
+
+  .skill-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .skill-card__icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+      140deg,
+      hsl(var(--hsl-nebula) / 0.22),
+      hsl(var(--hsl-plasma) / 0.14)
+    );
+    border: 1px solid var(--color-border);
+    color: var(--color-plasma);
+  }
+
+  .skill-card__title { font-size: var(--text-lg); }
+
+  .skill-list { display: flex; flex-direction: column; gap: var(--space-4); padding: 0; }
+
+  .skill__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: 0.4rem;
+  }
+
+  .skill__name { font-size: var(--text-sm); color: var(--color-text); }
+
+  .skill__level {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .skill__track {
+    height: 5px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+  }
+
+  .skill__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--gradient-stela);
+    /* transform-origin a la izquierda: la barra crece desde el borde
+       izquierdo, no desde el centro. */
+    transform-origin: left center;
+    transform: scaleX(var(--bar-scale));
+  }
+
+  /* La barra crece cuando su tarjeta se revela, encadenada al mismo gesto */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] .skill__fill { transform: scaleX(0); }
+    [data-reveal][data-revealed] .skill__fill {
+      animation: grow-bar 1s var(--ease-out) forwards;
+      animation-delay: calc(var(--reveal-delay, 0ms) + 180ms);
+    }
+  }
+</style>

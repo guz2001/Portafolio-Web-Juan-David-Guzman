@@ -1,0 +1,40 @@
+---
+/**
+ * ============================================================================
+ *  SECTION HEADER  —  Encabezado comun a todas las secciones
+ * ============================================================================
+ *  Existe para que las siete secciones del sitio compartan exactamente el
+ *  mismo ritmo vertical y la misma jerarquia tipografica. Si manana quieres
+ *  cambiar como se ven TODOS los titulos de seccion, se cambia aqui y ya.
+ *
+ *  JERARQUIA DE ENCABEZADOS
+ *  Renderiza siempre un <h2>: la pagina tiene un unico <h1> (el nombre, en el
+ *  hero) y cada seccion cuelga de el como <h2>. Ese orden sin saltos es lo que
+ *  permite a un lector de pantalla navegar la pagina por encabezados.
+ * ============================================================================
+ */
+import Icon from './Icon.astro';
+
+/**
+ * @typedef {Object} Props
+ * @property {string}  eyebrow    Rotulo corto sobre el titulo.
+ * @property {string}  title      Titulo de la seccion.
+ * @property {string} [subtitle]  Frase de apoyo bajo el titulo.
+ * @property {string} [icon]      Icono opcional junto al rotulo.
+ * @property {string} [id]        id para enlazar con aria-labelledby.
+ */
+const { eyebrow, title, subtitle, icon, id } = Astro.props;
+---
+
+<header class="section-head" data-reveal>
+  <p class="section-head__eyebrow">
+    {icon && <Icon name={icon} size={14} />}
+    {eyebrow}
+  </p>
+
+  <h2 class="section-head__title" id={id}>
+    <span class="text-stela">{title}</span>
+  </h2>
+
+  {subtitle && <p class="section-head__subtitle">{subtitle}</p>}
+</header>

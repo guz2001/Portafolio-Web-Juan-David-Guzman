@@ -1,0 +1,44 @@
+---
+/**
+ * ============================================================================
+ *  PAGINA DE INICIO
+ * ============================================================================
+ *  Es solo un indice: ensambla las secciones en orden. Ni una linea de logica
+ *  ni de contenido, que es exactamente lo que se busca. Si alguien abre este
+ *  archivo debe entender la estructura completa del sitio de un vistazo.
+ *
+ *  ORDEN DE LAS SECCIONES Y POR QUE
+ *    1. Hero            quien eres            → engancha
+ *    2. Sobre mi        el perfil completo    → contexto
+ *    3. Estadisticas    cifras verificables   → credibilidad
+ *    4. Habilidades     stack tecnico         → filtro tecnico del reclutador
+ *    5. Trayectoria     experiencia y estudios→ respaldo
+ *    6. Proyectos       codigo real           → prueba
+ *    7. Especializacion en que puedes aportar → proyeccion
+ *    8. Contacto        como localizarte      → conversion
+ *
+ *  Es un embudo: interes, contexto, prueba y llamada a la accion.
+ * ============================================================================
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+import Hero       from '../components/sections/Hero.astro';
+import About      from '../components/sections/About.astro';
+import Stats      from '../components/sections/Stats.astro';
+import Skills     from '../components/sections/Skills.astro';
+import Timeline   from '../components/sections/Timeline.astro';
+import Projects   from '../components/sections/Projects.astro';
+import Expertise  from '../components/sections/Expertise.astro';
+import Contact    from '../components/sections/Contact.astro';
+---
+
+<BaseLayout>
+  <Hero />
+  <About />
+  <Stats />
+  <Skills />
+  <Timeline />
+  <Projects />
+  <Expertise />
+  <Contact />
+</BaseLayout>

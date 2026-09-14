@@ -1,0 +1,234 @@
+---
+/**
+ * ============================================================================
+ *  SECCION TRAYECTORIA  —  Experiencia laboral y formacion
+ * ============================================================================
+ *  Ocupa el lugar de la seccion "Resume" de la plantilla, con dos columnas:
+ *  experiencia a la izquierda, formacion a la derecha, unidas por una linea
+ *  temporal luminosa.
+ *
+ *  SEMANTICA
+ *  Cada bloque es un <article> dentro de una <ol>: el orden importa (es una
+ *  cronologia) y una lista ordenada lo comunica a la tecnologia asistiva.
+ *  Las fechas van en <time datetime="YYYY-MM-DD">, que es el formato que leen
+ *  tanto los buscadores como los lectores de pantalla.
+ * ============================================================================
+ */
+import { experience, education } from '../../data/index.js';
+import SectionHeader from '../ui/SectionHeader.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<section class="section section--alt" id="trayectoria" aria-labelledby="trayectoria-titulo">
+  <div class="container">
+    <SectionHeader
+      eyebrow="Recorrido"
+      title="Trayectoria"
+      subtitle="Dónde he trabajado y cómo me he formado."
+      icon="timeline"
+      id="trayectoria-titulo"
+    />
+
+    <div class="timeline-grid">
+      <!-- ------------------------------------------------- Experiencia -->
+      <div class="timeline-column">
+        <h3 class="timeline-column__title" data-reveal>
+          <Icon name="briefcase" size={18} />
+          Experiencia laboral
+        </h3>
+
+        <ol class="timeline" role="list">
+          {experience.map((item, index) => (
+            <li>
+              <article
+                class="timeline-item"
+                data-reveal
+                data-reveal-group="exp"
+                style={`--reveal-delay:${index * 80}ms`}
+              >
+                <h4 class="timeline-item__role">{item.role}</h4>
+
+                <p class="timeline-item__meta">
+                  <span class="timeline-item__company">{item.company}</span>
+                  <span class="timeline-item__sep" aria-hidden="true">·</span>
+                  <time datetime={item.startDate}>{item.period}</time>
+                </p>
+
+                <p class="timeline-item__place">
+                  <Icon name="location" size={13} />
+                  {item.location}
+                </p>
+
+                <ul class="timeline-item__points" role="list">
+                  {item.achievements.map((achievement) => (
+                    <li>{achievement}</li>
+                  ))}
+                </ul>
+
+                <ul class="chip-list timeline-item__stack" role="list">
+                  {item.stack.map((tech) => <li class="chip">{tech}</li>)}
+                </ul>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <!-- --------------------------------------------------- Formacion -->
+      <div class="timeline-column">
+        <h3 class="timeline-column__title" data-reveal>
+          <Icon name="graduation" size={18} />
+          Formación académica
+        </h3>
+
+        <ol class="timeline" role="list">
+          {education.map((item, index) => (
+            <li>
+              <article
+                class:list={['timeline-item', item.isDegree && 'timeline-item--highlight']}
+                data-reveal
+                data-reveal-group="edu"
+                style={`--reveal-delay:${index * 80}ms`}
+              >
+                <h4 class="timeline-item__role">{item.title}</h4>
+
+                <p class="timeline-item__meta">
+                  <span class="timeline-item__company">{item.institution}</span>
+                  <span class="timeline-item__sep" aria-hidden="true">·</span>
+                  <time datetime={item.startDate}>{item.period}</time>
+                </p>
+
+                {(item.hours || item.note) && (
+                  <ul class="chip-list timeline-item__stack" role="list">
+                    {item.note && <li class="chip chip--accent">{item.note}</li>}
+                    {item.hours && <li class="chip">{item.hours}</li>}
+                  </ul>
+                )}
+              </article>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    gap: clamp(2rem, 1rem + 4vw, 3.5rem);
+    align-items: start;
+  }
+
+  .timeline-column__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .timeline-column__title :global(svg) { color: var(--color-plasma); }
+
+  /* La linea vertical es un borde en la propia lista: un solo elemento en
+     lugar de un pseudo-elemento por cada entrada. */
+  .timeline {
+    position: relative;
+    list-style: none;
+    padding: 0 0 0 var(--space-6);
+    margin: 0;
+    border-left: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .timeline-item { position: relative; }
+
+  /* Nodo luminoso sobre la linea temporal */
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--space-6) * -1 - 5px);
+    top: 0.55rem;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg);
+    border: 2px solid var(--color-nebula);
+    box-shadow: 0 0 12px 1px hsl(var(--hsl-nebula) / 0.75);
+  }
+
+  .timeline-item--highlight::before {
+    background: var(--gradient-stela);
+    border-color: transparent;
+  }
+
+  .timeline-item__role {
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-size: var(--text-sm);
+    margin-bottom: 0.4rem;
+  }
+
+  .timeline-item__company { color: var(--color-plasma); font-weight: 500; }
+  .timeline-item__sep { color: var(--color-text-dim); }
+  .timeline-item__meta time { color: var(--color-text-dim); font-family: var(--font-mono); font-size: var(--text-xs); }
+
+  .timeline-item__place {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-dim);
+    margin-bottom: var(--space-3);
+  }
+
+  .timeline-item__points {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: 0;
+    margin-bottom: var(--space-4);
+    list-style: none;
+  }
+
+  .timeline-item__points li {
+    position: relative;
+    padding-left: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--leading-snug);
+  }
+
+  /* Vineta propia: un punto pequeño alineado con la primera linea de texto */
+  .timeline-item__points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: hsl(var(--hsl-plasma) / 0.8);
+  }
+
+  .timeline-item__stack { margin-top: var(--space-2); }
+
+  .chip--accent {
+    border-color: hsl(var(--hsl-nebula) / 0.45);
+    color: var(--color-text);
+    background: hsl(var(--hsl-nebula) / 0.14);
+  }
+</style>

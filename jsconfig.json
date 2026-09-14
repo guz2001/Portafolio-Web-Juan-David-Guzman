@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "checkJs": true,
+    "strict": true,
+    "allowJs": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@data/*":       ["src/data/*"],
+      "@components/*": ["src/components/*"],
+      "@layouts/*":    ["src/layouts/*"],
+      "@styles/*":     ["src/styles/*"],
+      "@config/*":     ["src/config/*"]
+    }
+  },
+  "include": ["src/**/*", "astro.config.mjs"],
+  "exclude": ["node_modules", "dist", "reference"]
+}

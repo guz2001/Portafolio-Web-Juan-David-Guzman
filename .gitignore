@@ -1,0 +1,17 @@
+# Dependencias
+node_modules/
+
+# Salida del build
+dist/
+.astro/
+
+# Entorno
+.env
+.env.production
+
+# Sistema operativo / editor
+.DS_Store
+*.log
+.vscode/*
+!.vscode/extensions.json
+.idea/
