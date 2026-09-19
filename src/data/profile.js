@@ -34,7 +34,7 @@ export const profile = {
     'herramientas propias de monitoreo y soporte. Integro IA Generativa como ' +
     'apoyo para acelerar debugging, documentación y aprendizaje técnico.',
 
-  location: 'Pereira, Colombia',
+  location: 'Colombia',
   availability: 'Disponible para trabajo remoto',
 
   email: 'guz20dgc@gmail.com',
