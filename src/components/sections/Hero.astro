@@ -26,9 +26,39 @@
 import { profile } from '../../data/index.js';
 import Icon from '../ui/Icon.astro';
 import TypeWriter from '../islands/TypeWriter.jsx';
+
+// El enlace de GitHub y el nombre de este repo fijan de donde sale el SVG
+// animado: lo genera .github/workflows/snake.yml (Platane/snk) y lo publica
+// en la rama huerfana "output" de ESTE repositorio.
+const githubUser = profile.socials.find((s) => s.id === 'github')?.href.split('/').at(-1);
+const githubRepo = 'Portafolio-Web-Juan-David-Guzman';
+const snakeSrc = `https://raw.githubusercontent.com/${githubUser}/${githubRepo}/output/github-snake-dark.svg`;
 ---
 
 <section class="section hero" id="inicio" aria-labelledby="hero-titulo">
+  <!-- Serpiente animada sobre el mapa de contribuciones de GitHub: SVG
+       estatico servido desde la rama "output", cero JS y cero coste de
+       render aqui. -->
+  <a
+    class="hero__snake"
+    href={`https://github.com/${githubUser}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`Ver el perfil de GitHub de ${profile.name} — gráfico de contribuciones animado`}
+    data-reveal
+  >
+    <img
+      class="hero__snake-img"
+      src={snakeSrc}
+      alt={`Gráfico de contribuciones de GitHub de ${profile.name}, animado como una serpiente que recorre las casillas`}
+      loading="eager"
+      decoding="async"
+      width="880"
+      height="136"
+      onerror="this.closest('.hero__snake').style.display='none'"
+    />
+  </a>
+
   <div class="container hero__inner">
     <!-- Estado de disponibilidad -->
     <p class="hero__badge" data-reveal>
@@ -87,6 +117,38 @@ import TypeWriter from '../islands/TypeWriter.jsx';
     inset: 0;
     background: var(--gradient-halo);
     pointer-events: none;
+  }
+
+  /* -------------------------------------------------------- Snake GitHub */
+  .hero__snake {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: min(100%, 46rem);
+    margin: 0 auto var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: var(--glow-nebula);
+    transition: border-color var(--duration-fast) var(--ease-soft),
+                transform var(--duration-normal) var(--ease-soft);
+  }
+
+  .hero__snake:hover {
+    border-color: hsl(var(--hsl-plasma) / 0.45);
+    transform: translateY(-2px);
+  }
+
+  .hero__snake-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 880 / 136;
+  }
+
+  @media (max-width: 640px) {
+    .hero__snake { padding: var(--space-3) var(--space-4); }
   }
 
   .hero__inner {
