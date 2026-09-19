@@ -59,11 +59,21 @@ import Icon from '../ui/Icon.astro';
                   {item.location}
                 </p>
 
-                <ul class="timeline-item__points" role="list">
-                  {item.achievements.map((achievement) => (
-                    <li>{achievement}</li>
-                  ))}
-                </ul>
+                <details class="timeline-item__details">
+                  <summary class="timeline-item__toggle">
+                    <span class="timeline-item__toggle-text">
+                      <span class="is-closed">Saber más</span>
+                      <span class="is-open">Ver menos</span>
+                    </span>
+                    <Icon name="arrowDown" size={13} class="timeline-item__toggle-icon" />
+                  </summary>
+
+                  <ul class="timeline-item__points" role="list">
+                    {item.achievements.map((achievement) => (
+                      <li>{achievement}</li>
+                    ))}
+                  </ul>
+                </details>
 
                 <ul class="chip-list timeline-item__stack" role="list">
                   {item.stack.map((tech) => <li class="chip">{tech}</li>)}
@@ -195,12 +205,39 @@ import Icon from '../ui/Icon.astro';
     margin-bottom: var(--space-3);
   }
 
+  .timeline-item__details { margin-bottom: var(--space-3); }
+
+  .timeline-item__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-plasma);
+    list-style: none;
+    user-select: none;
+  }
+
+  .timeline-item__toggle::-webkit-details-marker { display: none; }
+  .timeline-item__toggle::marker { content: ''; }
+
+  .timeline-item__toggle:hover { color: var(--color-text); }
+
+  .timeline-item__toggle-icon { transition: transform 0.2s ease; }
+  .timeline-item__details[open] .timeline-item__toggle-icon { transform: rotate(180deg); }
+
+  .timeline-item__toggle .is-open { display: none; }
+  .timeline-item__details[open] .timeline-item__toggle .is-open { display: inline; }
+  .timeline-item__details[open] .timeline-item__toggle .is-closed { display: none; }
+
   .timeline-item__points {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
     padding: 0;
-    margin-bottom: var(--space-4);
+    margin-top: var(--space-3);
+    margin-bottom: 0;
     list-style: none;
   }
 
