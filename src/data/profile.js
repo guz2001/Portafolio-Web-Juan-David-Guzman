@@ -17,9 +17,8 @@ export const profile = {
   // Ordenados de mayor a menor peso en el CV.
   roleRotation: [
     'Ingeniero de Sistemas e Infraestructura',
-    'Especialista en VoIP y Asterisk',
     'Administrador de entornos Linux y Docker',
-    'Desarrollador Backend con Python y Django',
+    'Desarrollador Fullstack con Python(Django) y Javascritpt(Astros,React)',
     'Automatización con Python y Bash',
   ],
 
