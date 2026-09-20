@@ -39,7 +39,7 @@ export const profile = {
 
   email: 'guz20dgc@gmail.com',
   phone: '@jdguzman2001',
-  phoneRaw: '+573226096124', // formato E.164 para los enlaces tel: y wa.me
+  phoneRaw: 'jdguzman2001', // formato E.164 para los enlaces tel: y wa.me
 
   // ---------------------------------------------------------------------
   //  FOTO DE PERFIL
