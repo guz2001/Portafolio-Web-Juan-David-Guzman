@@ -38,7 +38,7 @@ export const profile = {
   availability: 'Disponible para trabajo remoto',
 
   email: 'guz20dgc@gmail.com',
-  phone: '322 609 6124',
+  phone: '@jdguzman2001',
   phoneRaw: '+573226096124', // formato E.164 para los enlaces tel: y wa.me
 
   // ---------------------------------------------------------------------
@@ -89,7 +89,7 @@ export const profile = {
     {
       id: 'whatsapp',
       label: 'WhatsApp',
-      href: 'https://wa.me/573226096124',
+      href: 'https://wa.me/@jdguzman2001',
       icon: 'whatsapp',
     },
   ],
