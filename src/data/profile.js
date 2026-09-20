@@ -35,7 +35,7 @@ export const profile = {
     'apoyo para acelerar debugging, documentación y aprendizaje técnico.',
 
   location: 'Colombia',
-  availability: 'Disponible para trabajo remoto',
+  availability: 'Disponible para trabajo remoto o presencial',
 
   email: 'guz20dgc@gmail.com',
   phone: '@jdguzman2001',
