@@ -62,7 +62,7 @@ export const profile = {
   //  src/components/sections/About.astro (seccion "Sobre mi").
   //  La barra lateral y la tarjeta de compartir usan `initials`, no la foto.
   // ---------------------------------------------------------------------
-  photo: '/public/yo1.jpeg',
+  photo: '/images/yo1.jpg',
   initials: 'JG',
 
   /** @type {import('../types/portfolio.js').SocialLink[]} */
