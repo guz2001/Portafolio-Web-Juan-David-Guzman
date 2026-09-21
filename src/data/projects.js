@@ -53,8 +53,10 @@ export const projects = [
     links: [
       { label: 'Backend (Django)', href: 'https://github.com/guz2001/nutricion_backend', icon: 'github' },
       { label: 'Frontend (Astro)', href: 'https://github.com/guz2001/intercambios_nutricionales_frontend', icon: 'github' },
+      { label: 'NutriConsulta', href: 'https://nutriconsulta-zeta.vercel.app/', icon: 'github' },
+    
     ],
-    cover: '',
+    cover: '/images/nutriweb.png',
     accent: '268 85% 68%', // violeta nebulosa
     featured: true,
     year: '2026',
